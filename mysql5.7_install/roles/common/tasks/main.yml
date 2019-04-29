@@ -1,0 +1,8 @@
+- name: Install MySQL initializtion required software
+  yum: name={{ item }} state=installed
+  with_items:
+    - perl-Data-Dumper
+    - libaio-devel
+    - numactl
+    - gcc
+    - openssl

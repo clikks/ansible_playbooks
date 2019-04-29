@@ -1,0 +1,6 @@
+mysql_user: mysql
+mysql_port: 3306
+mysql_datadir: /data/mysql
+mysql_basedir: /usr/local/mysql
+mysql_socket: /tmp/mysql.sock
+mysql_passwd: 123456

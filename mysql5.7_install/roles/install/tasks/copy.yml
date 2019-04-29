@@ -1,0 +1,48 @@
+#- name: Copy MySQL5.7.23 Software
+#  copy:
+#    src=mysql5.7.tar.gz
+#    dest=/tmp/mysql.tar.gz
+#    owner=root
+#    group=root
+
+- name: Download MySQL5.7.23 Software
+  get_url:
+    url='http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-5.7.23-linux-glibc2.12-x86_64.tar.gz'
+    dest=/tmp/mysql.tar.gz
+    owner=root
+    group=root
+
+- name: Create MySQL Basedir
+  file:
+    path={{ mysql_basedir }}
+    state=directory
+    owner=root
+    group=root
+
+- name: Uncompression MySQL Software
+  shell:
+    tar zxf /tmp/mysql.tar.gz -C /usr/local/mysql --strip-components 1
+
+- name: Copy MySQL Startup Script
+  template:
+    src=mysqld
+    dest=/etc/init.d/mysqld
+    owner=root
+    group=root
+    mode=755
+
+- name: Copy MySQL Config File
+  template:
+    src=my.cnf
+    dest=/etc/
+    owner=root
+    group=root
+    mode=0644
+
+- name: Copy MySQL Change Passwd Script
+  copy:
+    src=alter_passwd.sh
+    dest=/tmp/alter_passwd.sh
+    owner=root
+    group=root
+    mode=0755

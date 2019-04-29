@@ -1,0 +1,40 @@
+- name: Create MySQL User
+  user:
+    name={{ mysql_user }}
+    state=present
+    createhome=no
+    shell=/sbin/nologin
+
+- name: Create MySQL Datadir
+  file:
+    path={{ mysql_datadir }}
+    state=directory
+    owner=root
+    group=root
+
+- name: Initialize MySQL Server
+  shell:
+    /usr/local/mysql/bin/mysqld --initialize --user=mysql --datadir={{ mysql_datadir }} &> /tmp/mysql_output.txt \
+    && /usr/local/mysql/bin/mysql_ssl_rsa_setup --datadir={{ mysql_datadir }} \
+    && ln -s /usr/local/mysql/bin/mysql /usr/local/bin/mysql
+
+- name: Start MySQL Service
+  shell:
+    /etc/init.d/mysqld start
+
+- name: Add Boot Start MySQL Service
+  shell:
+    chkconfig --level 345 mysqld on
+
+- name: Excute alter_passwd Script
+  shell:
+    /bin/bash /tmp/alter_passwd.sh
+
+- name: Delete MySQL Compression Files
+  file:
+    path=/tmp/{{ item }}
+    state=absent
+  with_items:
+    - mysql.tar.gz
+    - alter_passwd.sh
+    - mysql_output.txt
